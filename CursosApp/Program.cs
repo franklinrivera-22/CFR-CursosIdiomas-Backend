@@ -1,4 +1,6 @@
 using CursosApp.Database;
+using CursosApp.Services.Categories;
+using CursosApp.Services.Courses;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
