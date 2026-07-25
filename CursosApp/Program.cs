@@ -1,6 +1,7 @@
 using CursosApp.Database;
 using CursosApp.Services.Categories;
 using CursosApp.Services.Courses;
+using CursosApp.Services.Payments;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -11,6 +12,8 @@ builder.Services.AddDbContext<AppDbContext>(options =>
 
 builder.Services.AddTransient<ICategoryService, CategoryService>();
 builder.Services.AddTransient<ICourseService, CourseService>();
+builder.Services.AddTransient<IPaymentGatewayService, SandboxPaymentGatewayService>();
+
 
 builder.Services.AddOpenApi();
 
