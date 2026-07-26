@@ -17,6 +17,8 @@ builder.Services.AddTransient<ICategoryService, CategoryService>();
 builder.Services.AddTransient<ICourseService, CourseService>();
 builder.Services.AddTransient<IPaymentGatewayService, SandboxPaymentGatewayService>();
 builder.Services.AddTransient<ICheckoutService, CheckoutService>();
+builder.Services.AddTransient<ITransactionService, TransactionService>();
+builder.Services.AddTransient<IStatisticsService, StatisticsService>();
 
 builder.Services.AddOpenApi();
 builder.Services.AddControllers();
