@@ -1,8 +1,11 @@
 using CursosApp.Database;
+using CursosApp.Extensions;
 using CursosApp.Services.Categories;
 using CursosApp.Services.Checkout;
 using CursosApp.Services.Courses;
 using CursosApp.Services.Payments;
+using CursosApp.Services.Statistics;
+using CursosApp.Services.Transactions;
 using Microsoft.EntityFrameworkCore;
 using Scalar.AspNetCore;
 
@@ -19,6 +22,10 @@ builder.Services.AddTransient<IPaymentGatewayService, SandboxPaymentGatewayServi
 builder.Services.AddTransient<ICheckoutService, CheckoutService>();
 builder.Services.AddTransient<ITransactionService, TransactionService>();
 builder.Services.AddTransient<IStatisticsService, StatisticsService>();
+
+
+builder.Services.AddCorsConfiguration(builder.Configuration);
+builder.Services.AddAuthenticationConfig(builder.Configuration);
 
 builder.Services.AddOpenApi();
 builder.Services.AddControllers();
