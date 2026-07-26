@@ -1,5 +1,6 @@
 using CursosApp.Database;
 using CursosApp.Extensions;
+using CursosApp.Services.Auth;
 using CursosApp.Services.Categories;
 using CursosApp.Services.Checkout;
 using CursosApp.Services.Courses;
@@ -22,7 +23,7 @@ builder.Services.AddTransient<IPaymentGatewayService, SandboxPaymentGatewayServi
 builder.Services.AddTransient<ICheckoutService, CheckoutService>();
 builder.Services.AddTransient<ITransactionService, TransactionService>();
 builder.Services.AddTransient<IStatisticsService, StatisticsService>();
-
+builder.Services.AddTransient<IAuthService, AuthService>();
 
 builder.Services.AddCorsConfiguration(builder.Configuration);
 builder.Services.AddAuthenticationConfig(builder.Configuration);
