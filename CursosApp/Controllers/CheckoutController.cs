@@ -18,14 +18,22 @@ namespace CursosApp.Controllers
             _checkoutService = checkoutService;
         }
 
-        [HttpPost]
+        [HttpPost("create-order")]
         [Authorize(AuthenticationSchemes = "Bearer", Roles = RolesConstant.NORMAL_USER)]
-        public async Task<ActionResult> Checkout([FromBody] CheckoutRequestDto dto)
+        public async Task<ActionResult> CreateOrder([FromBody] CheckoutRequestDto dto)
         {
             var userId = User.FindFirstValue("UserId");
-            var response = await _checkoutService.ProcessCheckoutAsync(dto, userId);
+            var response = await _checkoutService.CreateOrderAsync(dto, userId);
             return StatusCode(response.StatusCode, response);
         }
 
+        [HttpPost("capture")]
+        [Authorize(AuthenticationSchemes = "Bearer", Roles = RolesConstant.NORMAL_USER)]
+        public async Task<ActionResult> Capture([FromBody] ConfirmOrderDto dto)
+        {
+            var userId = User.FindFirstValue("UserId");
+            var response = await _checkoutService.ConfirmOrderAsync(dto.OrderId, userId);
+            return StatusCode(response.StatusCode, response);
+        }
     }
 }

@@ -12,14 +12,12 @@ using Scalar.AspNetCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
-
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseSqlite(builder.Configuration.GetConnectionString("DefaultConnection")));
 
-
 builder.Services.AddTransient<ICategoryService, CategoryService>();
 builder.Services.AddTransient<ICourseService, CourseService>();
-builder.Services.AddTransient<IPaymentGatewayService, SandboxPaymentGatewayService>();
+builder.Services.AddHttpClient<IPaymentGatewayService, PayPalPaymentGatewayService>();
 builder.Services.AddTransient<ICheckoutService, CheckoutService>();
 builder.Services.AddTransient<ITransactionService, TransactionService>();
 builder.Services.AddTransient<IStatisticsService, StatisticsService>();
@@ -31,9 +29,8 @@ builder.Services.AddAuthenticationConfig(builder.Configuration);
 builder.Services.AddOpenApi();
 builder.Services.AddControllers();
 
-
-
 var app = builder.Build();
+
 using (var scope = app.Services.CreateScope())
 {
     var services = scope.ServiceProvider;
@@ -48,15 +45,16 @@ using (var scope = app.Services.CreateScope())
     }
 }
 
-
 if (app.Environment.IsDevelopment())
 {
     app.MapOpenApi();
     app.MapScalarApiReference();
 }
 
-app.UseHttpsRedirection();
+
 app.UseCors("CorsPolicy");
+
+app.UseHttpsRedirection();
 app.UseAuthentication();
 app.UseAuthorization();
 app.MapControllers();

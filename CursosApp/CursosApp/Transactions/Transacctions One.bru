@@ -1,0 +1,15 @@
+meta {
+  name: Transacctions One
+  type: http
+  seq: 2
+}
+
+get {
+  url: http://localhost:5000/api/transactions/{id}
+  body: none
+  auth: inherit
+}
+
+settings {
+  encodeUrl: true
+}

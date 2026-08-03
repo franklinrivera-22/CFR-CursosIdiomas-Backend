@@ -1,0 +1,30 @@
+meta {
+  name: Checkout
+  type: http
+  seq: 1
+}
+
+post {
+  url: http://localhost:5000/api/checkout
+  body: json
+  auth: inherit
+}
+
+body:json {
+  {
+    "cardNumber": null,
+    "cardExpiry": null,
+    "cardCvv": null,
+    "items": [
+      {
+        "courseId": null,
+        "quantity": 1
+      }
+    ]
+  }
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}

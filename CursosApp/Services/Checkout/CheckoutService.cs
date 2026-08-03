@@ -1,4 +1,3 @@
-
 using CursosApp.Constants;
 using CursosApp.Database;
 using CursosApp.Dtos.Checkout;
@@ -10,8 +9,6 @@ using CursosApp.Mappers;
 using CursosApp.Services.Payments;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-
-
 
 namespace CursosApp.Services.Checkout
 {
@@ -31,7 +28,8 @@ namespace CursosApp.Services.Checkout
             _userManager = userManager;
         }
 
-        public async Task<ResponseDto<CheckoutResponseDto>> ProcessCheckoutAsync(
+       
+        public async Task<ResponseDto<CreateOrderResponseDto>> CreateOrderAsync(
             CheckoutRequestDto dto, string userId)
         {
             var courseIds = dto.Items.Select(i => i.CourseId).Distinct().ToList();
@@ -42,7 +40,7 @@ namespace CursosApp.Services.Checkout
 
             if (courses.Count == 0)
             {
-                return new ResponseDto<CheckoutResponseDto>
+                return new ResponseDto<CreateOrderResponseDto>
                 {
                     StatusCode = HttpStatusCode.BAD_REQUEST,
                     Status = false,
@@ -56,7 +54,7 @@ namespace CursosApp.Services.Checkout
             foreach (var cartItem in dto.Items)
             {
                 var course = courses.FirstOrDefault(c => c.Id == cartItem.CourseId);
-                if (course is null) continue; 
+                if (course is null) continue;
 
                 int quantity = cartItem.Quantity <= 0 ? 1 : cartItem.Quantity;
                 amount += course.Price * quantity;
@@ -72,7 +70,6 @@ namespace CursosApp.Services.Checkout
                     UpdatedDate = DateTime.Now
                 });
             }
-
 
             var user = await _userManager.FindByIdAsync(userId);
 
@@ -90,17 +87,49 @@ namespace CursosApp.Services.Checkout
                 UpdatedDate = DateTime.Now
             };
 
+
+            var orderId = await _paymentGateway.CreateOrderAsync(amount);
+            transaction.PaymentReference = orderId;
+
             _context.Transactions.Add(transaction);
             await _context.SaveChangesAsync();
 
+            return new ResponseDto<CreateOrderResponseDto>
+            {
+                StatusCode = HttpStatusCode.OK,
+                Status = true,
+                Message = "Orden creada.",
+                Data = new CreateOrderResponseDto
+                {
+                    OrderId = orderId,
+                    Amount = amount
+                }
+            };
+        }
+
+       
+        public async Task<ResponseDto<CheckoutResponseDto>> ConfirmOrderAsync(
+            string orderId, string userId)
+        {
+            var transaction = await _context.Transactions
+                .Include(t => t.Items)
+                .FirstOrDefaultAsync(t => t.PaymentReference == orderId && t.UserId == userId);
+
+            if (transaction is null)
+            {
+                return new ResponseDto<CheckoutResponseDto>
+                {
+                    StatusCode = HttpStatusCode.BAD_REQUEST,
+                    Status = false,
+                    Message = "Orden no encontrada."
+                };
+            }
 
             var paymentResult = await _paymentGateway.ProcessPaymentAsync(new PaymentRequestDto
             {
-                Amount = amount,
-                CardNumber = dto.CardNumber,
-                CardExpiry = dto.CardExpiry,
-                CardCvv = dto.CardCvv,
-
+                Amount = transaction.Amount,
+                OrderId = orderId,
+                CustomerEmail = transaction.CustomerEmail
             });
 
             transaction.Status = paymentResult.Approved
@@ -126,6 +155,5 @@ namespace CursosApp.Services.Checkout
                 }
             };
         }
-        
     }
 }
