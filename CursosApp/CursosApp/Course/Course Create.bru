@@ -1,0 +1,29 @@
+meta {
+  name: Course Create
+  type: http
+  seq: 2
+}
+
+post {
+  url: http://localhost:5000/api/courses
+  body: json
+  auth: inherit
+}
+
+body:json {
+  {
+    "title": null,
+    "description": null,
+    "level": null,
+    "price": 0,
+    "durationHours": 1,
+    "imageUrl": null,
+    "isActive": true,
+    "categoryId": null
+  }
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}
