@@ -139,6 +139,36 @@ namespace CursosApp.Services.Checkout
             transaction.PaymentMessage = paymentResult.Message;
             transaction.UpdatedDate = DateTime.Now;
 
+
+            if (paymentResult.Approved)
+            {
+                var yaInscrito = await _context.Enrollments
+                    .Where(e => e.UserId == userId)
+                    .Select(e => e.CourseId)
+                    .ToListAsync();
+
+                foreach (var item in transaction.Items)
+                {
+                    if (yaInscrito.Contains(item.CourseId)) continue;
+
+                    _context.Enrollments.Add(new EnrollmentEntity
+                    {
+                        Id = Guid.NewGuid().ToString(),
+                        UserId = userId,
+                        CourseId = item.CourseId,
+                        TransactionId = transaction.Id,
+                        Progress = 0,
+                        IsActive = true,
+                        CreatedById = userId,
+                        CreatedDate = DateTime.Now,
+                        UpdatedDate = DateTime.Now
+                    });
+                    yaInscrito.Add(item.CourseId);
+                }
+            }
+
+
+
             _context.Transactions.Update(transaction);
             await _context.SaveChangesAsync();
 

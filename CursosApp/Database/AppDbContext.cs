@@ -25,6 +25,12 @@ namespace CursosApp.Database
                 .WithOne(i => i.Transaction)
                 .HasForeignKey(i => i.TransactionId)
                 .OnDelete(DeleteBehavior.Cascade);
+
+            builder.Entity<EnrollmentEntity>()
+                .HasOne(e => e.Course)
+                .WithMany()
+                .HasForeignKey(e => e.CourseId)
+                .OnDelete(DeleteBehavior.Restrict);
         }
 
         private static void SetIdentityTableNames(ModelBuilder builder)
@@ -43,5 +49,6 @@ namespace CursosApp.Database
         public DbSet<CourseEntity> Courses { get; set; }
         public DbSet<TransactionEntity> Transactions { get; set; }
         public DbSet<TransactionItemEntity> TransactionItems { get; set; }
+        public DbSet<EnrollmentEntity> Enrollments { get; set; }
     }
 }
