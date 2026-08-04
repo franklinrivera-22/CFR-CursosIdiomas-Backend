@@ -1,9 +1,11 @@
 using CursosApp.Database;
+using CursosApp.Dtos.Enrollments;
 using CursosApp.Extensions;
 using CursosApp.Services.Auth;
 using CursosApp.Services.Categories;
 using CursosApp.Services.Checkout;
 using CursosApp.Services.Courses;
+using CursosApp.Services.Enrollments;
 using CursosApp.Services.Payments;
 using CursosApp.Services.Statistics;
 using CursosApp.Services.Transactions;
@@ -22,6 +24,7 @@ builder.Services.AddTransient<ICheckoutService, CheckoutService>();
 builder.Services.AddTransient<ITransactionService, TransactionService>();
 builder.Services.AddTransient<IStatisticsService, StatisticsService>();
 builder.Services.AddTransient<IAuthService, AuthService>();
+builder.Services.AddTransient<IEnrollmentsService, EnrollmentService>();
 
 builder.Services.AddCorsConfiguration(builder.Configuration);
 builder.Services.AddAuthenticationConfig(builder.Configuration);
