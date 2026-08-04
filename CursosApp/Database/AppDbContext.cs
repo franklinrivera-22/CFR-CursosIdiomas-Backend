@@ -26,7 +26,6 @@ namespace CursosApp.Database
                 .HasForeignKey(i => i.TransactionId)
                 .OnDelete(DeleteBehavior.Cascade);
 
-            // Relación inscripción -> curso (no borrar en cascada al eliminar cursos)
             builder.Entity<EnrollmentEntity>()
                 .HasOne(e => e.Course)
                 .WithMany()

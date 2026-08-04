@@ -17,11 +17,9 @@ namespace CursosApp.Entities
         [ForeignKey(nameof(CourseId))]
         public virtual CourseEntity Course { get; set; }
 
-        // De qué compra proviene el acceso (trazabilidad)
         [Column("transaction_id")]
         public string TransactionId { get; set; }
 
-        // Progreso del estudiante: 0 a 100
         [Column("progress")]
         public int Progress { get; set; }
 
